@@ -79,8 +79,25 @@ Protocol-based interfaces for zero-coupling integration:
 
 Plugins register via `pyproject.toml` entry points or programmatically.
 
+## Dependency Analysis
+
+The `core/dependency_graph.py` module builds a directed graph from the registry,
+enabling cross-prompt and cross-bucket analysis. Five analyzer tools in `tools/analyzers/`
+query this graph:
+
+| Tool | Question it answers |
+|------|-------------------|
+| `flag_impact` | What sections/prompts/buckets are affected by flag X? |
+| `gap_analysis` | Which scopes are missing explicit flag overrides? |
+| `unused_flags` | Which flags are defined but never referenced? |
+| `dependency_trace` | What's the full dependency chain for a prompt? |
+| `conflict_detector` | Are there redundant or contradictory overrides? |
+
+See [Dependency Analysis Reference](../references/dependency-analysis.md) for full documentation.
+
 ## Further Reading
 
 - [Core Beliefs](../design-docs/core-beliefs.md) — operating principles
 - [Initial Spec](../../initial-spec.md) — full package specification
 - [Design Docs](../design-docs/index.md) — feature design documents
+- [Dependency Analysis](../references/dependency-analysis.md) — dependency tooling reference
