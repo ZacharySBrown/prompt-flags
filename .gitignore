@@ -35,5 +35,8 @@ uv.lock
 # Session files (ephemeral, per-instance)
 .claude/sessions/
 
+# Internal docs (private, not tracked)
+docs/internal/
+
 # MkDocs build output
 site/
