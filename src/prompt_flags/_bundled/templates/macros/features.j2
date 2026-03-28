@@ -1,0 +1,17 @@
+{#- Bundled macros for feature-flagged prompt sections.
+
+Usage:
+    {% from "macros/features.j2" import feature_section %}
+
+    {% call feature_section("chain_of_thought", title="Reasoning") %}
+    Think step by step before answering.
+    {% endcall %}
+-#}
+
+{% macro feature_section(flag_name, title=None) %}
+{% if feature_enabled(flag_name) %}
+{% if title %}## {{ title }}
+{% endif %}
+{{ caller() }}
+{% endif %}
+{% endmacro %}

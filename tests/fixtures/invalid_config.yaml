@@ -1,0 +1,13 @@
+version: "1.0"
+
+buckets:
+  guides:
+    description: "Step-by-step reasoning guides"
+    template_dir: "prompts/guides"
+    enabled: true
+    typo_field: "this should be rejected"
+
+flags:
+  chain_of_thought:
+    default: true
+    description: "Enable step-by-step reasoning sections"

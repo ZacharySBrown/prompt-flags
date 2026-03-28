@@ -1,0 +1,99 @@
+version: "1.0"
+
+buckets:
+  system_context:
+    description: "System-level context and identity"
+    template_dir: "prompts/system_context"
+    enabled: true
+    prompts:
+      identity:
+        template: "identity.j2"
+        sections:
+          - id: "system_identity"
+            content: "You are a helpful assistant."
+            priority: 1
+          - id: "task_description"
+            content: "Your task is to answer questions."
+            flag: "verbose_instructions"
+            priority: 10
+
+  guides:
+    description: "Step-by-step reasoning guides"
+    template_dir: "prompts/guides"
+    enabled: true
+    flags:
+      chain_of_thought:
+        enabled: true
+      few_shot_examples:
+        enabled: true
+    ordering:
+      - before: "reasoning_steps"
+        after: "worked_example"
+    prompts:
+      coding_guide:
+        template: "coding_guide.j2"
+        sections:
+          - id: "reasoning_steps"
+            content: "Think step by step before answering."
+            flag: "chain_of_thought"
+            priority: 10
+          - id: "worked_example"
+            content: "Here is a worked example."
+            flag: "few_shot_examples"
+            priority: 20
+          - id: "style_constraints"
+            content: "Follow clean code practices."
+            flag: "safety_guardrails"
+            priority: 30
+
+  constraints:
+    description: "Safety and behavioral constraints"
+    template_dir: "prompts/constraints"
+    enabled: true
+    prompts:
+      safety:
+        template: "safety.j2"
+        sections:
+          - id: "safety_rules"
+            content: "Do not generate harmful content."
+            flag: "safety_guardrails"
+            priority: 10
+
+  disabled_bucket:
+    description: "A bucket that is disabled"
+    template_dir: "prompts/disabled"
+    enabled: false
+    prompts:
+      hidden:
+        template: "hidden.j2"
+        sections:
+          - id: "hidden_section"
+            content: "This should not appear."
+            priority: 1
+
+flags:
+  chain_of_thought:
+    default: true
+    description: "Enable step-by-step reasoning sections"
+  few_shot_examples:
+    default: false
+    description: "Include few-shot examples in prompts"
+  json_output:
+    default: false
+    description: "Instruct model to respond in JSON"
+  safety_guardrails:
+    default: true
+    description: "Include safety constraint sections"
+  verbose_instructions:
+    default: false
+    description: "Use detailed instruction variants"
+
+ordering:
+  - before: "system_identity"
+    after: "task_description"
+  - before: "task_description"
+    after: "reasoning_steps"
+
+env_vars:
+  MODEL_NAME:
+    default: "gpt-4"

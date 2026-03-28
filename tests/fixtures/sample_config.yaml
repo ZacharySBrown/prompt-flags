@@ -1,0 +1,75 @@
+version: "1.0"
+
+buckets:
+  guides:
+    description: "Step-by-step reasoning guides"
+    template_dir: "prompts/guides"
+    enabled: true
+    flags:
+      chain_of_thought:
+        enabled: true
+      few_shot_examples:
+        enabled: true
+    ordering:
+      - before: "reasoning_steps"
+        after: "worked_example"
+    prompts:
+      coding_guide:
+        template: "coding_guide.j2"
+        sections:
+          - id: "reasoning_steps"
+            flag: "chain_of_thought"
+            priority: 10
+          - id: "worked_example"
+            flag: "few_shot_examples"
+            priority: 20
+          - id: "style_constraints"
+            flag: "safety_guardrails"
+            priority: 30
+      analysis_guide:
+        template: "analysis_guide.j2"
+        flags:
+          verbose_instructions:
+            enabled: false
+        sections:
+          - id: "analysis_framework"
+            flag: "chain_of_thought"
+            priority: 10
+          - id: "output_schema"
+            flag: "json_output"
+            priority: 20
+
+  tool_prompts:
+    description: "Prompts for tool use instructions"
+    template_dir: "prompts/tool_prompts"
+    enabled: true
+
+flags:
+  chain_of_thought:
+    default: true
+    description: "Enable step-by-step reasoning sections"
+  few_shot_examples:
+    default: false
+    description: "Include few-shot examples in prompts"
+  json_output:
+    default: false
+    description: "Instruct model to respond in JSON"
+  safety_guardrails:
+    default: true
+    description: "Include safety constraint sections"
+  verbose_instructions:
+    default: false
+    description: "Use detailed instruction variants"
+
+ordering:
+  - before: "system_identity"
+    after: "task_description"
+  - before: "task_description"
+    after: "constraints_block"
+
+env_vars:
+  MODEL_NAME:
+    default: "gpt-4"
+  TEMPERATURE:
+    default: "0.7"
+    type: "float"
